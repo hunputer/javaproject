@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ 
+<mapper namespace="com.ph4.s1.store.product.review.ProductReviewDAO">
+	<select id="getList" resultType="ProductReviewDTO" parameterType="ReviewPager">
+		select * from
+		(select rownum R, N.* from
+		(select * from productReview
+		where product_num = #{product_num}
+		order by review_num desc) N)
+		where R between #{startRow} and #{lastRow}
+	</select>
+	
+	<select id="getCount" resultType="Long" parameterType="LostReplyPager">
+		select count(review_num) from productreview where product_num = #{product_num}
+	</select>
+	
+	<insert id="setInsert" parameterType="ProductReviewDTO">
+		  <selectKey keyProperty="review_num" resultType="Long" order="BEFORE">
+   	      	  select productreview_seq.nextval from dual
+   	      </selectKey>
+		insert into productreview values (#{review_num}, #{product_num}, #{id}, #{starCount}, #{contents})
+	</insert>
+	
+	<delete id="setDelete" parameterType="ProductReviewDTO">
+		delete from productreview where review_num = #{review_num}
+	</delete>
+</mapper>
